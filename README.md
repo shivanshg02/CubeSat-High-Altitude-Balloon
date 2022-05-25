@@ -1,5 +1,9 @@
 ﻿# CubeSat-High-Altitude-Balloon
 
+## Libraries
+- `Adafruit BME 280 Library`
+- `Adafruit LTR 390 Library`
+
 ## Payloads
 
 ### UNO
