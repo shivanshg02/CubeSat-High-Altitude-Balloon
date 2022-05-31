@@ -31,10 +31,10 @@ rfm9x.enable_crc = True
 rfm9x.tx_power = 23
 rfm9x.coding_rate = 9
 rfm9x.signal_bandwidth = 62500
-rfm9x.spreading_factor = 9
+rfm9x.spreading_factor = 10
 rfm9x.preamble_length = 8
 
-current_data = 'aaa'
+current_data = bytes('BEGIN',"utf-8")
 def i2c(id, tick):
    global pi, current_data
 

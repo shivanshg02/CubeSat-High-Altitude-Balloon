@@ -20,9 +20,10 @@ void loop()
 {
    
    DateTime now = rtc.now();
-   sprintf(str,"%d/%d/%d %d:%d:%d",now.year(),now.month(),now.day(),now.hour(),now.minute(),now.second());
+   sprintf(str,"%d/%d/%d %d:%d:%d eom",now.year(),now.month(),now.day(),now.hour(),now.minute(),now.second());
+   Serial.println(str);
    Wire.beginTransmission(9); // transmit to device #9
-   Wire.write(str);           // sends 16 bytes
+   Wire.write(str);         
    Wire.endTransmission();    // stop transmitting
 
    delay(3000);
