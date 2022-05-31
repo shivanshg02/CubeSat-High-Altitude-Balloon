@@ -34,16 +34,16 @@ rfm9x.signal_bandwidth = 62500
 rfm9x.spreading_factor = 9
 rfm9x.preamble_length = 8
 
-rfm9x.identifier = 0x69
+#rfm9x.identifier = 0x69
 
-current_data = ''
+current_data = 'aaa'
 def i2c(id, tick):
    global pi, current_data
 
    s, b, d = pi.bsc_i2c(I2C_ADDR)
 
    if b:
-    current_data = str(d[:-1]).strip()
+    current_data = str(d).strip()
      
 e = pi.event_callback(pigpio.EVENT_BSC, i2c)
 
