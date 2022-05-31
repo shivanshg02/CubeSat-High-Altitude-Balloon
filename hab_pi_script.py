@@ -48,7 +48,7 @@ e = pi.event_callback(pigpio.EVENT_BSC, i2c)
 
 
 def main():
-    rfm9x.send(bytes(current_data,"utf-8"))
+    rfm9x.send(bytes(current_data))
     
     # packet = rfm9x.receive(with_header=True,with_ack=False,timeout=1999)
     # if packet is not None:
@@ -61,6 +61,6 @@ while True:
         main()
     except:
         e.cancel()
-        pi.bsc_i2c(0) # Disable BSC peripheral
         pi.stop()
+        exit()
 
