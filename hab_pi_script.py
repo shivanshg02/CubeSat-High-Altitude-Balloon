@@ -43,7 +43,7 @@ def i2c(id, tick):
    s, b, d = pi.bsc_i2c(I2C_ADDR)
 
    if b:
-    current_data = str(d[:-1])
+    current_data = str(d[:-1]).strip()
      
 e = pi.event_callback(pigpio.EVENT_BSC, i2c)
 
