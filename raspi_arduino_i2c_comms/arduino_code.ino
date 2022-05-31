@@ -1,22 +1,29 @@
 #include <Wire.h>
+#include "RTClib.h"
+
+RTC_DS1307 rtc;
 
 void setup()
 {
    Wire.begin(); // join i2c bus as master
+
+   if (! rtc.begin()) {
+    Serial.println("Couldn't find RTC");
+    Serial.flush();
+    while (1) delay(10);
+  }
 }
 
-char str[17];
-
-int x = 0;
+char str[100];
 
 void loop()
 {
-   sprintf(str, "Message %7d\n", x);
-   if (++x > 9999999) x=0;
-
+   
+   DateTime now = rtc.now();
+   sprintf(str,"%d/%d/%d %d:%d:%d",now.year(),now.month(),now.day(),now.hour(),now.minute(),now.second());
    Wire.beginTransmission(9); // transmit to device #9
    Wire.write(str);           // sends 16 bytes
    Wire.endTransmission();    // stop transmitting
 
-   delay(50);
+   delay(3000);
 }

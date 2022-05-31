@@ -8,7 +8,7 @@ import digitalio
 import adafruit_rfm9x
 
 # Define radio parameters.
-RADIO_FREQ_MHZ = 420.69   # Frequency of the radio in Mhz. Must match your
+RADIO_FREQ_MHZ = 434   # Frequency of the radio in Mhz. Must match your
 # module! Can be a value like 915.0, 433.0, etc.
 
 # Define pins connected to the chip.
@@ -28,9 +28,6 @@ rfm9x.coding_rate = 7
 rfm9x.signal_bandwidth = 62500
 rfm9x.spreading_factor = 9
 rfm9x.preamble_length = 8
-
-rfm9x.node = 2
-rfm9x.destination = 1
 
 
 print("Waiting for packets...")
