@@ -61,5 +61,6 @@ while True:
         main()
     except:
         e.cancel()
+        pi.bsc_i2c(0) # Disable BSC peripheral
         pi.stop()
 
