@@ -3,9 +3,6 @@
 #
 
 import time
-
-time.sleep(60)
-
 import board
 import busio
 import digitalio
@@ -39,8 +36,8 @@ rfm9x.signal_bandwidth = 62500
 rfm9x.spreading_factor = 9
 rfm9x.preamble_length = 8
 
-ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
-ser.reset_input_buffer()
+# ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+# ser.reset_input_buffer()
 
 
 
@@ -68,13 +65,13 @@ def main():
     time.sleep(3)
 
 
-def seeed_homing_signal():
-    ser.write(b"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+# def seeed_homing_signal():
+#     ser.write(b"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
 
 while True:
     try:
         main()
-        seeed_homing_signal()
+        #seeed_homing_signal()
     except:
         e.cancel()
         pi.stop()
