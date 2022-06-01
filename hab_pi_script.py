@@ -1,13 +1,18 @@
 # raspberry pi code for RFM9x - receiver end
 # just listens for packets and prints them out
 #
+
 import time
+
+time.sleep(60)
+
 import board
 import busio
 import digitalio
 import pigpio
 import adafruit_rfm9x
 import picamera
+import serial
 
 I2C_ADDR=9
 
@@ -34,6 +39,13 @@ rfm9x.signal_bandwidth = 62500
 rfm9x.spreading_factor = 9
 rfm9x.preamble_length = 8
 
+ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+ser.reset_input_buffer()
+
+
+
+
+
 current_data = bytes('BEGIN',"utf-8")
 def i2c(id, tick):
    global pi, current_data
@@ -56,9 +68,13 @@ def main():
     time.sleep(3)
 
 
+def seeed_homing_signal():
+    ser.write(b"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+
 while True:
     try:
         main()
+        seeed_homing_signal()
     except:
         e.cancel()
         pi.stop()
