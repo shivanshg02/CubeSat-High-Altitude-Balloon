@@ -127,7 +127,7 @@ String handleIMU(){
 
 bool initBME(){
   if(!bme.beginI2C()){
-    Serial.println("Failed to initialize IMU");
+    Serial.println("Failed to initialize BME280");
     return false;
   }
   else{
