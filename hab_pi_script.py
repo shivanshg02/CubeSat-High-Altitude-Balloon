@@ -50,7 +50,7 @@ pi = pigpio.pi()
 if not pi.connected:
     exit()
 pi.bsc_i2c(I2C_ADDR)
-current_data = bytes('BEGIN',"utf-8")
+current_data = b"BEGIN"
 def i2c(id, tick):
     global pi, current_data
 
@@ -86,7 +86,7 @@ rfm9x.preamble_length = 8
 
 
 def main():
-    rfm9x.send(bytes(current_data))
+    rfm9x.send(dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S').encode() + b" || " + bytes(current_data))
     # packet = rfm9x.receive(with_header=True,with_ack=False,timeout=1999)
     # if packet is not None:
     #     pass

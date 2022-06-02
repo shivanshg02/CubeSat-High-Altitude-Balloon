@@ -19,7 +19,7 @@ float r_x, r_y, r_z;  // angular acceleration for imu
 float m_x, m_y, m_z;  // magnetic field for imu
 unsigned long startTime;
 unsigned long currTime;
-unsigned long prevSendTime = millis();
+unsigned long prevSendTime;
 char i2cBuffer[bufferLen];   // max buffer size is 32 bytes
 
 BME280 bme;
@@ -35,7 +35,7 @@ bool initGPS(){
 String handleGPS(){
   String toReturn = "";
   if(Serial1.available()){
-    String gpsStr = Serial1.readString();
+    String gpsStr = Serial1.readStringUntil('\n');
     if(gpsStr.indexOf("$GPGGA") != -1){
       int comma = gpsStr.indexOf(',');
       gpsStr = gpsStr.substring(comma + 1);
@@ -119,7 +119,7 @@ String handleIMU(){
   if(IMU.magneticFieldAvailable()){
     IMU.readMagneticField(m_x, m_y, m_z);
   }
-  toReturn += "Ax: " + (String) a_x + " Ay: " + (String) a_y + " Az: " + (String) a_z;
+  toReturn += " Ax: " + (String) a_x + " Ay: " + (String) a_y + " Az: " + (String) a_z;
   toReturn += " Rx: " + (String) r_x + " Ry: " + (String) r_y + " Rz: " + (String) r_z;
   toReturn += " Mx: " + (String) m_x + " My: " + (String) m_y + " Mz: " + (String) m_z;
   return toReturn;
@@ -138,7 +138,7 @@ bool initBME(){
 
 String handleBME(){
   String toReturn = "";
-  toReturn += "Hum: " + (String) bme.readFloatHumidity() + 
+  toReturn += " Hum: " + (String) bme.readFloatHumidity() + 
               " Pres: " + (String) bme.readFloatPressure() +
               " Alt: " + (String) bme.readFloatAltitudeFeet() + 
               " Temp: " + (String) bme.readTempF();
@@ -171,7 +171,7 @@ String (*sensorHandlers[numSensors])() = {handleGPS,
 void setup() {
   // Establish serial connection before anything
   Serial.begin(115200);
-  while(!Serial);
+  //while(!Serial);
   Serial.println("System started...");
   
   // start I2C bus
@@ -190,18 +190,15 @@ void setup() {
     while(true);
   }
   startTime = millis();
-  Serial.println(startTime);
 }
 
 void loop() {
   // update timestamp
   currTime = millis() - startTime;
-  Serial.println(currTime);
   // update sensor vals
   for(int i = 0; i < numSensors; i++){
     currentData[i] = sensorHandlers[i]();
   }
-
   // log data
   dataLog = SD.open(logName, FILE_WRITE);
   dataLog.println((String) currTime);
@@ -212,18 +209,15 @@ void loop() {
   dataLog.close();
 
   // periodically send data to raspi to log
-  Serial.println(currTime-prevSendTime);
   if(currTime - prevSendTime > i2cInterval){
     prevSendTime = currTime;
     Wire.beginTransmission(raspiAddress);
-    String timestamp = (String) currTime + '\n';
-    timestamp.toCharArray(i2cBuffer, bufferLen);
-    Wire.write(i2cBuffer);
-    for(int i = 0; i < numSensors; i++){
+    for(int i = 0; i < numSensors-2; i++){
       clearBuffer.toCharArray(i2cBuffer, bufferLen);
       currentData[i].toCharArray(i2cBuffer, bufferLen);
       Wire.write(i2cBuffer);
     }
     Wire.endTransmission();
   }
+  delay(1000);
 }
