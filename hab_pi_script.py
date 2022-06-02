@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+from pickle import STOP
 import time
 import board
 import busio
@@ -13,24 +14,29 @@ import datetime as dt
 
 # Pi Camera
 camera = picamera.PiCamera()
-camera.resolution = (1920,1080)
-camera.framerate = 30
+camera.resolution = (1280,720)
+camera.framerate = 24
 camera.awb_mode = 'auto'
 camera.video_stabilization = True
 camera.annotate_background = picamera.Color('black')
 camera.annotate_text = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 camera_record_thread = None
+STOP_FLAG = False
 def video_loop():
-    camera.start_recording("/home/dos/Desktop/videos/"+str(int(time.time()))+".h264")
-    camera.wait_recording(5*60)
-    camera.stop_recording()
+    while True:
+        start = dt.datetime.now()
+        camera.start_recording("/home/dos/Desktop/videos/"+dt.datetime.now().strftime('%Y%m%d_%H%M%S')+".h264")
+        while (dt.datetime.now() - start).seconds < 5*60 and not STOP_FLAG:
+            camera.annotate_text = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            camera.wait_recording(0.2)
+        camera.stop_recording()
 def start_video():
     global camera_record_thread
     camera_record_thread = threading.Thread(target=video_loop)
     camera_record_thread.start()
 def stop_video():
-    global camera_record_thread
-    camera.stop_recording()
+    global camera_record_thread,STOP_FLAG
+    STOP_FLAG = True
     if camera_record_thread is not None:
         camera_record_thread.join()
     camera_record_thread = None
@@ -78,14 +84,12 @@ rfm9x.preamble_length = 8
 
 
 def main():
-    print(f"sent lora {current_data}")
     rfm9x.send(bytes(current_data))
     # packet = rfm9x.receive(with_header=True,with_ack=False,timeout=1999)
     # if packet is not None:
     #     pass
 
 def seeed_homing_signal():
-    print('sent 433.4 signal')
     ser.write(b"aaa")
 
 #############################################################################
