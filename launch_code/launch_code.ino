@@ -5,7 +5,7 @@
 #include "SparkFunBME280.h"
 
 static const uint32_t GPSBaud       = 9600;
-static const int      raspiAddress  = 3;
+static const int      raspiAddress  = 9;
 static const int      numSensors    = 3;
 static const int      sdCS          = 2;
 static const int      i2cInterval   = 5000;
@@ -171,7 +171,7 @@ String (*sensorHandlers[numSensors])() = {handleGPS,
 void setup() {
   // Establish serial connection before anything
   Serial.begin(115200);
-  while(!Serial);
+  //while(!Serial);
   Serial.println("System started...");
   
   // start I2C bus

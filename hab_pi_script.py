@@ -52,12 +52,13 @@ if not pi.connected:
 pi.bsc_i2c(I2C_ADDR)
 current_data = bytes('BEGIN',"utf-8")
 def i2c(id, tick):
-   global pi, current_data
+    global pi, current_data
 
-   s, b, d = pi.bsc_i2c(I2C_ADDR)
+    s, b, d = pi.bsc_i2c(I2C_ADDR)
 
-   if b:
-    current_data = d
+    if b:
+        current_data = d
+
 e = pi.event_callback(pigpio.EVENT_BSC, i2c)
 
 
