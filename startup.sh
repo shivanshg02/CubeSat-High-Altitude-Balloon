@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo pigpiod
+/bin/sleep 30
 
 cd /home/dos/Desktop/CubeSat-High-Altitude-Balloon/
 
