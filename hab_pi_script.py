@@ -21,7 +21,7 @@ camera.annotate_background = picamera.Color('black')
 camera.annotate_text = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 camera_record_thread = None
 def video_loop():
-    camera.start_recording("/home/dos/Desktop/videos/"+str(time.time())+".h264")
+    camera.start_recording("/home/dos/Desktop/videos/"+str(round(time.time(),0))+".h264")
     camera.wait_recording(5*60)
     camera.stop_recording()
 def start_video():
