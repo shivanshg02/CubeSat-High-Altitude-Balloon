@@ -8,7 +8,7 @@ static const uint32_t GPSBaud       = 9600;
 static const int      raspiAddress  = 9;
 static const int      numSensors    = 3;
 static const int      sdCS          = 2;
-static const int      i2cInterval   = 5000;
+static const int      i2cInterval   = 3000;
 static const String   logName       = "log.txt";
 static const int      bufferLen     = 33;
 static const String   clearBuffer   = "                                 ";
@@ -19,7 +19,7 @@ float r_x, r_y, r_z;  // angular acceleration for imu
 float m_x, m_y, m_z;  // magnetic field for imu
 unsigned long startTime;
 unsigned long currTime;
-unsigned long prevSendTime;
+unsigned long prevSendTime = millis();
 char i2cBuffer[bufferLen];   // max buffer size is 32 bytes
 
 BME280 bme;
@@ -171,7 +171,7 @@ String (*sensorHandlers[numSensors])() = {handleGPS,
 void setup() {
   // Establish serial connection before anything
   Serial.begin(115200);
-  //while(!Serial);
+  while(!Serial);
   Serial.println("System started...");
   
   // start I2C bus
@@ -190,12 +190,13 @@ void setup() {
     while(true);
   }
   startTime = millis();
+  Serial.println(startTime);
 }
 
 void loop() {
   // update timestamp
   currTime = millis() - startTime;
-
+  Serial.println(currTime);
   // update sensor vals
   for(int i = 0; i < numSensors; i++){
     currentData[i] = sensorHandlers[i]();
@@ -211,6 +212,7 @@ void loop() {
   dataLog.close();
 
   // periodically send data to raspi to log
+  Serial.println(currTime-prevSendTime);
   if(currTime - prevSendTime > i2cInterval){
     prevSendTime = currTime;
     Wire.beginTransmission(raspiAddress);
