@@ -14,8 +14,8 @@ import datetime as dt
 
 # Pi Camera
 camera = picamera.PiCamera()
-camera.resolution = (1280,720)
-camera.framerate = 24
+camera.resolution = (1920,1080)
+camera.framerate = 30
 camera.awb_mode = 'auto'
 camera.video_stabilization = True
 camera.annotate_background = picamera.Color('black')
