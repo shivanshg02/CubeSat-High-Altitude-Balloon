@@ -7,10 +7,10 @@ void setup()
 }
 
 char str[100];
+int x = 0;
 
 void loop()
 {
-   int x = 0;
    sprintf(str,"1234567890 %d eom",x++);
    Serial.println(str);
    Wire.beginTransmission(9); // transmit to device #9

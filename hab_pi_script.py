@@ -53,7 +53,9 @@ e = pi.event_callback(pigpio.EVENT_BSC, i2c)
 
 
 # Seeed board for 433.4 MHz beacon
-ser = serial.Serial('/dev/ttyS0', 9600, timeout=1)
+pi.set_mode(16,pigpio.OUTPUT)
+pi.write(16,0)
+ser = serial.Serial('/dev/ttyS0', 9600)
 
 
 
@@ -79,7 +81,7 @@ def main():
     #     pass
 
 def seeed_homing_signal():
-    ser.write(b"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+    ser.write(b"aaa")
 
 #############################################################################
 
