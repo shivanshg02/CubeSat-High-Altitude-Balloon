@@ -9,6 +9,7 @@ import adafruit_rfm9x
 import picamera
 import serial
 import threading
+import datetime as dt
 
 # Pi Camera
 camera = picamera.PiCamera()
@@ -16,6 +17,8 @@ camera.resolution = (1920,1080)
 camera.framerate = 30
 camera.awb_mode = 'auto'
 camera.video_stabilization = True
+camera.annotate_background = picamera.Color('black')
+camera.annotate_text = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 camera_record_thread = None
 def video_loop():
     camera.start_recording("/home/dos/Desktop/videos/"+str(time.time())+".h264")
