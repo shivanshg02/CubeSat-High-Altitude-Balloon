@@ -21,7 +21,7 @@ camera.annotate_background = picamera.Color('black')
 camera.annotate_text = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 camera_record_thread = None
 def video_loop():
-    camera.start_recording("/home/dos/Desktop/videos/"+str(round(time.time(),0))+".h264")
+    camera.start_recording("/home/dos/Desktop/videos/"+str(int(time.time()))+".h264")
     camera.wait_recording(5*60)
     camera.stop_recording()
 def start_video():
@@ -57,7 +57,7 @@ e = pi.event_callback(pigpio.EVENT_BSC, i2c)
 
 # Seeed board for 433.4 MHz beacon
 pi.set_mode(16,pigpio.OUTPUT)
-pi.write(16,0)
+pi.write(16,1)
 ser = serial.Serial('/dev/ttyS0', 9600)
 
 
@@ -78,12 +78,14 @@ rfm9x.preamble_length = 8
 
 
 def main():
+    print(f"sent lora {current_data}")
     rfm9x.send(bytes(current_data))
     # packet = rfm9x.receive(with_header=True,with_ack=False,timeout=1999)
     # if packet is not None:
     #     pass
 
 def seeed_homing_signal():
+    print('sent 433.4 signal')
     ser.write(b"aaa")
 
 #############################################################################
