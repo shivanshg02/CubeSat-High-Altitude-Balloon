@@ -11,8 +11,8 @@ static const int      numSensors    = 3;
 static const int      sdCS          = 2;
 static const int      i2cInterval   = 3000;
 static const String   logName       = "log.txt";
-static const int      bufferLen     = 251;
-static const String   clearBuffer   = "                                                                                                                                                                                                                                                           ";
+static const int      bufferLen     = 33;
+static const String   clearBuffer   = "                                 ";
 
 bool allInitialized = true;
 float a_x, a_y, a_z;  // linear acceleration for imu
@@ -56,7 +56,6 @@ String handleGPS(){
   while(Serial1.available()){
     parser.encode((char)Serial1.read());
   }
-  Serial.println(gpsData);
   return gpsData;
 }
 
@@ -233,6 +232,7 @@ void loop() {
   dataLog.println((String) currTime);
   for(int i = 0; i < numSensors; i++){
     dataLog.println(currentData[i]);
+    Serial.println(currentData[i]);
   }
   dataLog.println('\n');
   dataLog.close();
@@ -241,7 +241,7 @@ void loop() {
   if(currTime - prevSendTime > i2cInterval){
     prevSendTime = currTime;
     Wire.beginTransmission(raspiAddress);
-    for(int i = 0; i < numSensors; i++){
+    for(int i = 0; i < numSensors-2; i++){
       clearBuffer.toCharArray(i2cBuffer, bufferLen);
       currentData[i].toCharArray(i2cBuffer, bufferLen);
       Wire.write(i2cBuffer);
