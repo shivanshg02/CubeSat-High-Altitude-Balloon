@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-from pickle import STOP
 import time
 import board
 import busio
@@ -11,6 +10,8 @@ import picamera
 import serial
 import threading
 import datetime as dt
+
+START_TIME = time.time()
 
 # Pi Camera
 camera = picamera.PiCamera()

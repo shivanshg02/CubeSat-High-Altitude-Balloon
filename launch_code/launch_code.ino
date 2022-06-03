@@ -3,6 +3,7 @@
 #include <Arduino_LSM9DS1.h>
 #include <Wire.h>
 #include "SparkFunBME280.h"
+#include <ArduinoNmeaParser.h>
 
 static const uint32_t GPSBaud       = 9600;
 static const int      raspiAddress  = 9;
@@ -10,8 +11,8 @@ static const int      numSensors    = 3;
 static const int      sdCS          = 2;
 static const int      i2cInterval   = 3000;
 static const String   logName       = "log.txt";
-static const int      bufferLen     = 33;
-static const String   clearBuffer   = "                                 ";
+static const int      bufferLen     = 251;
+static const String   clearBuffer   = "                                                                                                                                                                                                                                                           ";
 
 bool allInitialized = true;
 float a_x, a_y, a_z;  // linear acceleration for imu
@@ -20,6 +21,7 @@ float m_x, m_y, m_z;  // magnetic field for imu
 unsigned long startTime;
 unsigned long currTime;
 unsigned long prevSendTime;
+String gpsData;
 char i2cBuffer[bufferLen];   // max buffer size is 32 bytes
 
 BME280 bme;
@@ -32,6 +34,33 @@ bool initGPS(){
   return true;
 }
 
+void onRmcUpdate(nmea::RmcData const rmc)
+{
+  if      (rmc.source == nmea::RmcSource::GPS)     gpsData += "GPS: ";
+  else if (rmc.source == nmea::RmcSource::GLONASS) gpsData += "GLONASS: ";
+  else if (rmc.source == nmea::RmcSource::Galileo) gpsData += "Galileo: ";
+  else if (rmc.source == nmea::RmcSource::GNSS)    gpsData += "GNSS: ";
+
+  if (rmc.is_valid)
+  {
+    gpsData += (String) rmc.longitude + "," + (String) rmc.latitude + "," + (String) rmc.speed + "," + (String) rmc.course;
+  }
+  else {
+    gpsData = "No GPS data";
+  }
+}
+
+ArduinoNmeaParser parser(onRmcUpdate, nullptr);
+
+String handleGPS(){
+  while(Serial1.available()){
+    parser.encode((char)Serial1.read());
+  }
+  Serial.println(gpsData);
+  return gpsData;
+}
+
+/*
 String handleGPS(){
   String toReturn = "";
   if(Serial1.available()){
@@ -95,7 +124,7 @@ String handleGPS(){
     }
   }
   return toReturn;
-}
+}*/
 
 bool initIMU(){
   if(!IMU.begin()){
@@ -212,7 +241,7 @@ void loop() {
   if(currTime - prevSendTime > i2cInterval){
     prevSendTime = currTime;
     Wire.beginTransmission(raspiAddress);
-    for(int i = 0; i < numSensors-2; i++){
+    for(int i = 0; i < numSensors; i++){
       clearBuffer.toCharArray(i2cBuffer, bufferLen);
       currentData[i].toCharArray(i2cBuffer, bufferLen);
       Wire.write(i2cBuffer);
