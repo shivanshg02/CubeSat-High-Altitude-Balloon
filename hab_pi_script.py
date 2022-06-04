@@ -45,29 +45,8 @@ def stop_video():
 
 
 
-# I2C comms with arduino
-I2C_ADDR=9
-pi = pigpio.pi()
-if not pi.connected:
-    exit()
-pi.bsc_i2c(I2C_ADDR)
-current_data = b"BEGIN"
-def i2c(id, tick):
-    global pi, current_data, packet_ready
-
-    s, b, d = pi.bsc_i2c(I2C_ADDR)
-
-    if b != b"\n":
-        current_data += d
-    else:
-        send_arduino_packet()
-        current_data = b""
-
-e = pi.event_callback(pigpio.EVENT_BSC, i2c)
-
-
-
 # Seeed board for 433.4 MHz beacon
+pi = pigpio.pi()
 pi.set_mode(16,pigpio.OUTPUT)
 pi.write(16,1)
 ser = serial.Serial('/dev/ttyS0', 9600)
@@ -87,16 +66,40 @@ rfm9x.signal_bandwidth = 62500
 rfm9x.spreading_factor = 9
 rfm9x.preamble_length = 8
 
-
-
 def send_arduino_packet():
-    rfm9x.send(dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S').encode() + b" || " + bytes(current_data))
+    rfm9x.send(dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S').encode() + b" || " + current_data)
 
 def health_signal():
     rfm9x.send(dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S').encode()+b" i'm still alive")
 
 def seeed_homing_signal():
     ser.write(b"aaa")
+
+
+
+
+# I2C comms with arduino
+I2C_ADDR=9
+if not pi.connected:
+    exit()
+pi.bsc_i2c(I2C_ADDR)
+current_data = b""
+def i2c(id, tick):
+    global pi, current_data
+
+    s, b, d = pi.bsc_i2c(I2C_ADDR)
+    if d != bytearray(b'\n'):
+        current_data += bytes(d)
+        print(current_data)
+    else:
+        print(current_data)
+        send_arduino_packet()
+        current_data = b""
+
+e = pi.event_callback(pigpio.EVENT_BSC, i2c)
+
+
+
 
 #############################################################################
 

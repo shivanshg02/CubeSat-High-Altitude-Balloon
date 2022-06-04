@@ -251,7 +251,7 @@ void loop() {
         else{
           chunk = toWrite.substring(i);
         }
-        delay(500);
+        delay(750);
         clearBuffer.toCharArray(i2cBuffer, bufferLen);
         chunk.toCharArray(i2cBuffer, bufferLen);
         Serial.println(i2cBuffer);
@@ -259,11 +259,11 @@ void loop() {
         Wire.write(i2cBuffer);
         Wire.endTransmission();
       }
-      delay(500);
+      delay(750);
       Wire.beginTransmission(raspiAddress);
       Wire.write('\n');
       Wire.endTransmission();
     }
   }
-  delay(500);
+  delay(2000);
 }
