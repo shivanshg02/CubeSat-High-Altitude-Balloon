@@ -15,7 +15,7 @@ def cleanser(string):
 
 def add_timestamp(string):
     now = datetime.now()
-    date_time = now.strftime("%m/%d/%Y,%H:%M:%S;")
+    date_time = now.strftime("%H:%M:%S;")
     return date_time+string
 
 arduino = serial.Serial('/dev/ttyACM0', 9600, timeout=1000)
