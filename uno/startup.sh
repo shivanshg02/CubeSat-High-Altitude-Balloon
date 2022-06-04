@@ -2,11 +2,11 @@
 
 /bin/sleep 30
 
-cd /home/uno/Desktop/CubeSat-High-Altitude-Balloon/
+cd /home/uno/Desktop/CubeSat-High-Altitude-Balloon/uno
 
-python3 /home/uno/Desktop/CubeSat-High-Altitude-Balloon/uno/logger.py & 
-python3 /home/uno/Desktop/CubeSat-High-Altitude-Balloon/uno/sender.py & 
-python3 /home/uno/Desktop/CubeSat-High-Altitude-Balloon/uno/recordvideo.py
+python3 logger.py & 
+python3 sender.py & 
+python3 recordvideo.py
 
 /bin/sleep 60
 
