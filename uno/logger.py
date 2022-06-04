@@ -3,7 +3,7 @@ import serial
 import time
 import board
 from adafruit_rockblock import RockBlock
-
+from datetime import datetime
 
 def cleanser(string):
     ret_str = ""
