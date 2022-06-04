@@ -20,7 +20,7 @@ def video_loop():
     global STOP_FLAG
     while not STOP_FLAG:
         start = dt.datetime.now()
-        camera.start_recording("/home/dos/Desktop/videos/"+dt.datetime.now().strftime('%Y%m%d_%H%M%S')+".h264")
+        camera.start_recording("/home/uno/Desktop/videos/"+dt.datetime.now().strftime('%Y%m%d_%H%M%S')+".h264")
         while (dt.datetime.now() - start).seconds < 5*60 and not STOP_FLAG:
             camera.annotate_text = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             camera.wait_recording(0.2)

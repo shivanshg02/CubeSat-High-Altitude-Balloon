@@ -27,7 +27,7 @@ while True:
     if arduino.in_waiting > 0:
         line = arduino.readline()
         if len(line) > 3:
-            line = cleanser(line).rstrip()
+            line = add_timestamp(cleanser(line).rstrip())
             target_file.write("\n"+line)
             target_file.flush()
 #WOOO IT'S WORKING
