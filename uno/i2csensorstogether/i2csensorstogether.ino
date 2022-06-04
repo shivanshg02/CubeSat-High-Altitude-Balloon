@@ -44,6 +44,8 @@ void setup() {
 
   ltr390_status = ltr.begin();
 
+  if (ltr390_status) {
+
   ltr.setMode(LTR390_MODE_UVS);
 
   ltr.setGain(LTR390_GAIN_3);
@@ -53,6 +55,7 @@ void setup() {
 
   ltr.setThresholds(100, 1000);
   ltr.configInterrupt(true, LTR390_MODE_UVS);
+  }
 
   
 }
@@ -109,8 +112,6 @@ String printValues() {
   if (ltr390_status) {
       if (ltr.newDataAvailable()) {
         return_str = String(return_str+"U"+ltr.readUVS());
-        //Serial.print("U");
-        //Serial.print(ltr.readUVS());
       } 
   }
   String final_str = "";

@@ -3,6 +3,7 @@ import serial
 import time
 import board
 from adafruit_rockblock import RockBlock
+from datetime import datetime
 
 
 def cleanser(string):
@@ -11,9 +12,11 @@ def cleanser(string):
         if i > 32 and i < 127:
             ret_str += i
     return ret_str
-'''
+
 def add_timestamp(string):
-'''
+    now = datetime.now()
+    date_time = now.strftime("%m/%d/%Y,%H:%M:%S;")
+    return date_time+string
 
 arduino = serial.Serial('/dev/ttyACM0', 9600, timeout=1000)
 arduino.reset_input_buffer()
@@ -31,7 +34,7 @@ while True:
         print("hi")
         line = arduino.readline()
         if len(line) > 3:
-            line = cleanser(line).decode('utf-8').rstrip()
+            line = add_timestamp(cleanser(line).decode('utf-8').rstrip())
             rb.text_out = line
             status = rb.satellite_transfer()
             if status[0] < 8:
