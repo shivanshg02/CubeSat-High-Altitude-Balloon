@@ -1,13 +1,6 @@
 #!/usr/bin/python3
-
 import time
-import board
-import busio
-import digitalio
-import pigpio
-import adafruit_rfm9x
 import picamera
-import serial
 import threading
 import datetime as dt
 
