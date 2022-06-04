@@ -12,7 +12,7 @@ static const int      sdCS          = 2;
 static const int      i2cInterval   = 3000;
 static const String   logName       = "log.txt";
 static const int      bufferLen     = 33;
-static const String   clearBuffer   = "                                 ";
+static const String   clearBuffer   = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
 
 bool allInitialized = true;
 float a_x, a_y, a_z;  // linear acceleration for imu
@@ -166,8 +166,8 @@ bool initBME(){
 
 String handleBME(){
   String toReturn = "";
-  toReturn += " Hum: " + (String) bme.readFloatHumidity() + 
-              " Pres: " + (String) bme.readFloatPressure() +
+  toReturn += /*" Hum: " + (String) bme.readFloatHumidity() + 
+              " Pres: " + (String) bme.readFloatPressure() +*/
               " Alt: " + (String) bme.readFloatAltitudeFeet() + 
               " Temp: " + (String) bme.readTempF();
 
@@ -192,8 +192,8 @@ bool (*initFuncs[numSensors + 1])() = {initGPS,
                                        initSD};
 
 String (*sensorHandlers[numSensors])() = {handleGPS,
-                                          handleIMU,
-                                          handleBME};
+                                          handleBME,
+                                          handleIMU};
 
 
 void setup() {
@@ -232,7 +232,7 @@ void loop() {
   dataLog.println((String) currTime);
   for(int i = 0; i < numSensors; i++){
     dataLog.println(currentData[i]);
-    Serial.println(currentData[i]);
+    //Serial.println(currentData[i]);
   }
   dataLog.println('\n');
   dataLog.close();
@@ -240,13 +240,14 @@ void loop() {
   // periodically send data to raspi to log
   if(currTime - prevSendTime > i2cInterval){
     prevSendTime = currTime;
-    Wire.beginTransmission(raspiAddress);
-    for(int i = 0; i < numSensors-2; i++){
+    for(int i = 0; i < numSensors-1; i++){
       clearBuffer.toCharArray(i2cBuffer, bufferLen);
-      currentData[i].toCharArray(i2cBuffer, bufferLen);
+      currentData[i].toCharArray(i2cBuffer, 20);
+      Serial.println(i2cBuffer);
+      Wire.beginTransmission(raspiAddress);
       Wire.write(i2cBuffer);
+      Wire.endTransmission();
     }
-    Wire.endTransmission();
   }
   delay(1000);
 }

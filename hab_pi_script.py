@@ -59,6 +59,7 @@ def i2c(id, tick):
 
     if b:
         current_data = d
+        print(d)
 
 e = pi.event_callback(pigpio.EVENT_BSC, i2c)
 
