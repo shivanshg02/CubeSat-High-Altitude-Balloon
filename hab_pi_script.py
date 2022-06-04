@@ -51,14 +51,14 @@ pi = pigpio.pi()
 if not pi.connected:
     exit()
 pi.bsc_i2c(I2C_ADDR)
-current_data = b"BEGIN"
+current_data = b""
 def i2c(id, tick):
     global pi, current_data, packet_ready
 
     s, b, d = pi.bsc_i2c(I2C_ADDR)
 
-    if b != b"\n":
-        current_data += d
+    if b != bytearray(b'\n'):
+        current_data += bytes(d)
     else:
         send_arduino_packet()
         current_data = b""
