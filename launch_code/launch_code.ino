@@ -11,8 +11,8 @@ static const int      numSensors    = 3;
 static const int      sdCS          = 2;
 static const int      i2cInterval   = 3000;
 static const String   logName       = "log.txt";
-static const int      bufferLen     = 33;
-static const String   clearBuffer   = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+static const int      bufferLen     = 17;
+static const String   clearBuffer   = "bbbbbbbbbbbbbbbbb";
 
 bool allInitialized = true;
 float a_x, a_y, a_z;  // linear acceleration for imu
@@ -36,6 +36,7 @@ bool initGPS(){
 
 void onRmcUpdate(nmea::RmcData const rmc)
 {
+  gpsData = "";
   if      (rmc.source == nmea::RmcSource::GPS)     gpsData += "GPS: ";
   else if (rmc.source == nmea::RmcSource::GLONASS) gpsData += "GLONASS: ";
   else if (rmc.source == nmea::RmcSource::Galileo) gpsData += "Galileo: ";
@@ -46,7 +47,7 @@ void onRmcUpdate(nmea::RmcData const rmc)
     gpsData += (String) rmc.longitude + "," + (String) rmc.latitude + "," + (String) rmc.speed + "," + (String) rmc.course;
   }
   else {
-    gpsData = "No GPS data";
+    gpsData = "No GPS dataaaaaaaaaaaaaaaaaaaa";
   }
 }
 
@@ -241,13 +242,28 @@ void loop() {
   if(currTime - prevSendTime > i2cInterval){
     prevSendTime = currTime;
     for(int i = 0; i < numSensors-1; i++){
-      clearBuffer.toCharArray(i2cBuffer, bufferLen);
-      currentData[i].toCharArray(i2cBuffer, 20);
-      Serial.println(i2cBuffer);
+      String toWrite = currentData[i];
+      for(int i = 0; i < toWrite.length(); i += bufferLen - 1){
+        String chunk = "";
+        if(i + bufferLen - 1 <= toWrite.length()){
+          chunk = toWrite.substring(i, i + bufferLen - 1);
+        }
+        else{
+          chunk = toWrite.substring(i);
+        }
+        delay(500);
+        clearBuffer.toCharArray(i2cBuffer, bufferLen);
+        chunk.toCharArray(i2cBuffer, bufferLen);
+        Serial.println(i2cBuffer);
+        Wire.beginTransmission(raspiAddress);
+        Wire.write(i2cBuffer);
+        Wire.endTransmission();
+      }
+      delay(500);
       Wire.beginTransmission(raspiAddress);
-      Wire.write(i2cBuffer);
+      Wire.write('\n');
       Wire.endTransmission();
     }
   }
-  delay(1000);
+  delay(500);
 }

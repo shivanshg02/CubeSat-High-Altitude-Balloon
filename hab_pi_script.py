@@ -53,13 +53,15 @@ if not pi.connected:
 pi.bsc_i2c(I2C_ADDR)
 current_data = b"BEGIN"
 def i2c(id, tick):
-    global pi, current_data
+    global pi, current_data, packet_ready
 
     s, b, d = pi.bsc_i2c(I2C_ADDR)
 
-    if b:
-        current_data = d
-        print(d)
+    if b != b"\n":
+        current_data += d
+    else:
+        send_arduino_packet()
+        current_data = b""
 
 e = pi.event_callback(pigpio.EVENT_BSC, i2c)
 
@@ -87,11 +89,11 @@ rfm9x.preamble_length = 8
 
 
 
-def main():
+def send_arduino_packet():
     rfm9x.send(dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S').encode() + b" || " + bytes(current_data))
-    # packet = rfm9x.receive(with_header=True,with_ack=False,timeout=1999)
-    # if packet is not None:
-    #     pass
+
+def health_signal():
+    rfm9x.send(dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S').encode()+b" i'm still alive")
 
 def seeed_homing_signal():
     ser.write(b"aaa")
@@ -101,10 +103,8 @@ def seeed_homing_signal():
 start_video()
 while True:
     try:
-        main()
-        time.sleep(1)
         seeed_homing_signal()
-        time.sleep(1)
+        time.sleep(5)
     except:
         e.cancel()
         pi.stop()
