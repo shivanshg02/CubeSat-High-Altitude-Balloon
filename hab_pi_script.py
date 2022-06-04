@@ -53,7 +53,7 @@ if not pi.connected:
 pi.bsc_i2c(I2C_ADDR)
 current_data = b""
 def i2c(id, tick):
-    global pi, current_data, packet_ready
+    global pi, current_data
 
     s, b, d = pi.bsc_i2c(I2C_ADDR)
 
