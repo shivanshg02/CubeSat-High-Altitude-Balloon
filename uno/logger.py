@@ -12,9 +12,11 @@ def cleanser(string):
             ret_str += chr(i)
     return ret_str
 
-'''
+
 def add_timestamp(string):
-''' 
+    now = datetime.now()
+    date_time = now.strftime("%m/%d/%Y,%H:%M:%S;")
+    return date_time+string
 
 arduino = serial.Serial('/dev/ttyACM0', 9600, timeout=1000)
 arduino.reset_input_buffer()
